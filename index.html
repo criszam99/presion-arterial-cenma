@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presión Arterial - CENMA 2026</title>
+</head>
+<body>
+
+<h1>🩺 PRESIÓN ARTERIAL</h1>
+<h2>Conocé tu nivel de riesgo</h2>
+
+<label>Edad:</label>
+<select id="edad">
+  <option value="">Seleccionar</option>
+  <option>Menos de 20</option>
+  <option>21 a 30</option>
+  <option>31 a 40</option>
+  <option>41 a 50</option>
+  <option>51 a 60</option>
+  <option>Más de 61</option>
+</select>
+
+<br><br>
+
+<label>Sexo biológico:</label>
+<select id="sexo">
+  <option value="">Seleccionar</option>
+  <option>Femenino</option>
+  <option>Masculino</option>
+</select>
+
+<hr>
+
+<p>1️⃣ ¿Consumís mucha sal o comidas muy saladas?</p>
+<label><input type="radio" name="p1" value="2"> Sí, casi siempre</label><br>
+<label><input type="radio" name="p1" value="1"> A veces</label><br>
+<label><input type="radio" name="p1" value="0"> No</label>
+
+<p>2️⃣ ¿Dormís menos de 6/7 horas por noche?</p>
+<label><input type="radio" name="p2" value="2"> Sí</label><br>
+<label><input type="radio" name="p2" value="1"> A veces</label><br>
+<label><input type="radio" name="p2" value="0"> No</label>
+
+<p>3️⃣ ¿Hacés actividad física al menos 3 veces por semana?</p>
+<label><input type="radio" name="p3" value="0"> Sí</label><br>
+<label><input type="radio" name="p3" value="1"> A veces</label><br>
+<label><input type="radio" name="p3" value="2"> No</label>
+
+<p>4️⃣ ¿Fumás o vapeás?</p>
+<label><input type="radio" name="p4" value="2"> Sí</label><br>
+<label><input type="radio" name="p4" value="1"> A veces</label><br>
+<label><input type="radio" name="p4" value="0"> No</label>
+
+<p>5️⃣ ¿Vivís con mucho estrés o nerviosismo?</p>
+<label><input type="radio" name="p5" value="2"> Sí</label><br>
+<label><input type="radio" name="p5" value="1"> A veces</label><br>
+<label><input type="radio" name="p5" value="0"> No</label>
+
+<p>6️⃣ ¿Te controlás la presión arterial?</p>
+<label><input type="radio" name="p6" value="0"> Sí, regularmente</label><br>
+<label><input type="radio" name="p6" value="1"> Algunas veces</label><br>
+<label><input type="radio" name="p6" value="2"> Nunca</label>
+
+<p>7️⃣ ¿En tu familia hay personas con presión alta, diabetes o problemas cardíacos?</p>
+<label><input type="radio" name="p7" value="2"> Sí</label><br>
+<label><input type="radio" name="p7" value="0"> No</label><br>
+<label><input type="radio" name="p7" value="1"> No sé</label>
+
+<br><br>
+
+<button onclick="calcular()">🚦 Ver mi resultado</button>
+
+<div id="resultado" style="margin-top:20px; padding:20px; font-size:20px;"></div>
+
+<script>
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwWw5_TICPPkF7LbDaIweXRQ_dVcGQ40XjAo6QZlbkd1ajtPMm1eUtMUhDSkd420NU/exec";
+
+function calcular() {
+  let edad = document.getElementById("edad").value;
+  let sexo = document.getElementById("sexo").value;
+
+  if (edad === "" || sexo === "") {
+    alert("Por favor completá edad y sexo.");
+    return;
+  }
+
+  let total = 0;
+
+  for (let i = 1; i <= 7; i++) {
+    let respuesta = document.querySelector('input[name="p' + i + '"]:checked');
+
+    if (!respuesta) {
+      alert("Por favor respondé todas las preguntas.");
+      return;
+    }
+
+    total += parseInt(respuesta.value);
+  }
+
+  let resultadoTexto = "";
+  let mensaje = "";
+  let color = "";
+
+  if (total <= 4) {
+    resultadoTexto = "RIESGO BAJO";
+    mensaje = "🟢 RIESGO BAJO<br>Puntaje: " + total + "/14<br>Seguí manteniendo hábitos saludables.";
+    color = "#b7e4c7";
+  } else if (total <= 8) {
+    resultadoTexto = "RIESGO MODERADO";
+    mensaje = "🟡 RIESGO MODERADO<br>Puntaje: " + total + "/14<br>Hay algunos hábitos que podés mejorar.";
+    color = "#fff3b0";
+  } else {
+    resultadoTexto = "RIESGO ELEVADO";
+    mensaje = "🔴 RIESGO ELEVADO<br>Puntaje: " + total + "/14<br>Se recomienda controlar la presión arterial y consultar a un profesional de salud.";
+    color = "#ffadad";
+  }
+
+  let resultado = document.getElementById("resultado");
+  resultado.style.background = color;
+  resultado.innerHTML = mensaje;
+
+  fetch(URL_SCRIPT, {
+    method: "POST",
+    body: JSON.stringify({
+      edad: edad,
+      sexo: sexo,
+      puntaje: total,
+      resultado: resultadoTexto
+    })
+  });
+}
+</script>
+
+</body>
+</html>
